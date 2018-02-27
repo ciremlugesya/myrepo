@@ -13,6 +13,8 @@
     "Business": "1.0.0-*",
     "Entity": "1.0.0-*",
     "Microsoft.AspNetCore.StaticFiles": "1.0.0-preview2-22545",
-    "microsoft.aspnetcore.session": "1.1.0"
+    "microsoft.aspnetcore.session": "1.1.0",
+    "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "1.1.0",
+    "microsoft.aspnetcore.authentication.cookies": "1.1.0"
   }
 }

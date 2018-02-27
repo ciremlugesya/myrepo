@@ -4,7 +4,11 @@ using DataAccess.Abstract;
 using DataAccess.Concrete.EntityFramework;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using WebApp.Entities;
 using WebApp.Middlewares;
 
 namespace WebApp
@@ -15,7 +19,6 @@ namespace WebApp
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
             services.AddScoped<IProductService, ProductService>();
             // addsingleton deseydik her request icin ilk olusturulan productservice nesnesi kullanilirdi
             // addscoped dedigimizde her request icin yeni nesne olusturulur
@@ -29,6 +32,17 @@ namespace WebApp
 
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<ICategoryDal, EFCategoryDal>();
+
+
+            services.AddDbContext<CustomIdentityDBContext>(
+                options => options.UseSqlServer(@"Data Source=APARLAN\SQLEXPRESS;Initial Catalog=Northwind;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Encrypt=False;TrustServerCertificate=True"));
+
+            services.AddIdentity<CustomIdentityUser, CustomIdentityRole>().AddEntityFrameworkStores<CustomIdentityDBContext>().AddDefaultTokenProviders();
+
+            services.AddMvc();
+            services.AddSession();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddDistributedMemoryCache();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -47,6 +61,11 @@ namespace WebApp
             //app.UseStaticFiles();
             app.UseFileServer();
             app.UseNodeModules(env.ContentRootPath); // custom middleware yazdik, bootstrap gibi uygulamalari arayuz projesinden kullanabilmek icin.
+
+            //app.UseIdentity();
+
+            app.UseAuthentication();
+            app.UseSession();
 
             app.UseMvcWithDefaultRoute();
         }
